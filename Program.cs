@@ -169,13 +169,13 @@ namespace dm
             }
 
 
-            Relations r = new Relations(maxElement);
+            Relations res = new Relations(maxElement);
             foreach (var pair in list)
             {
-                r[pair.Item1 - 1, pair.Item2 - 1] = true;
+                res[pair.Item1 - 1, pair.Item2 - 1] = true;
             }
 
-            return r;
+            return res;
 
         }
 
@@ -387,7 +387,24 @@ namespace dm
 
         public static Relations Conversion(in Relations r)
         {
-            
+            var list = new List<Tuple<int, int>>();
+            int maxElement = 0;
+            for (int i = 0; i < r.Length; i++)
+            {
+                if (r[i, i])
+                {
+                    list.Add(Tuple.Create<int, int>(i, i));
+                    maxElement = i;
+                }
+            }
+
+            Relations res = new Relations(maxElement);
+            foreach (var pair in list)
+            {
+                res[pair.Item1 - 1, pair.Item2 - 1] = true;
+            }
+
+            return res;
         }
     }
 
