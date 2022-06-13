@@ -44,6 +44,30 @@ namespace dm
             }
         }
 
+        public Relations(in List<Tuple<int, int>> collection)
+        {
+            int maxElement = 0;
+            foreach (var pair in collection)
+            {
+                maxElement = Math.Max(maxElement, Math.Max(pair.Item1, pair.Item2));
+            }
+
+            Relations res = new Relations(maxElement);
+            foreach (var pair in collection)
+            {
+                res[pair.Item1 - 1, pair.Item2 - 1] = true;
+            }
+        }
+
+        public Relations(in List<Tuple<int, int>> collection, int maxElement)
+        {
+            Relations res = new Relations(maxElement);
+            foreach (var pair in collection)
+            {
+                res[pair.Item1 - 1, pair.Item2 - 1] = true;
+            }
+        }
+
         /// <summary>
         /// Всего ячеек в матрице.
         /// </summary>
@@ -81,8 +105,10 @@ namespace dm
             try
             {
                 if ((secondElement > Length || firstElement > Length) || firstElement * secondElement == 0)
+                {
                     throw new ArgumentOutOfRangeException("Bad Elements");
-
+                }
+                
                 relations[firstElement - 1, secondElement - 1] = false;
             }
             catch (ArgumentOutOfRangeException ex)
@@ -100,7 +126,9 @@ namespace dm
             try
             {
                 if ((p.Item1 > Length || p.Item2 > Length) || p.Item2 * p.Item1 == 0)
+                {
                     throw new ArgumentOutOfRangeException("Bad Elements");
+                }
 
                 relations[p.Item1 - 1, p.Item2 - 1] = false;
             }
@@ -119,15 +147,30 @@ namespace dm
             get
             {
                 if (indexColumn >= Length || indexRow >= Length)
+                {
                     throw new ArgumentOutOfRangeException("Bad indexs");
+                }
+
                 return relations[indexRow, indexColumn];
             }
 
             set
             {
                 if (indexColumn >= Length || indexRow >= Length)
+                {
                     throw new ArgumentOutOfRangeException("Bad indexs");
-                relations[indexRow, indexColumn] = value;
+                }
+
+                if (relations[indexRow, indexColumn] && !value)
+                {
+                    relations[indexRow, indexColumn] = value;
+                    _power--;
+                }
+                else if (!relations[indexRow, indexColumn] && value)
+                {
+                    relations[indexRow, indexColumn] = value;
+                    _power++;
+                }
             }
         }
 
@@ -169,11 +212,7 @@ namespace dm
             }
 
 
-            Relations res = new Relations(maxElement);
-            foreach (var pair in list)
-            {
-                res[pair.Item1 - 1, pair.Item2 - 1] = true;
-            }
+            Relations res = new Relations(list, maxElement);
 
             return res;
 
@@ -398,11 +437,7 @@ namespace dm
                 }
             }
 
-            Relations res = new Relations(maxElement);
-            foreach (var pair in list)
-            {
-                res[pair.Item1 - 1, pair.Item2 - 1] = true;
-            }
+            Relations res = new Relations(list, maxElement);
 
             return res;
         }
